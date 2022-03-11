@@ -74,6 +74,9 @@ model_params = {
     "sheep_gain_from_food": UserSettableParameter(
         "slider", "Sheep Gain From Food", 4, 1, 10
     ),
+    "escapeRange": UserSettableParameter(
+        "slider", "Escape Range", 0.05, 0, 1.0, 0.01
+    ),
 }
 
 server = ModularServer(

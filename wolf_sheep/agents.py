@@ -13,6 +13,7 @@ class Sheep(RandomWalker):
 
     def __init__(self, unique_id, pos, model, moore, energy=None):
         super().__init__(unique_id, pos, model, moore=moore)
+        self.escapeChance = self.random.random() 
         self.energy = energy
 
     def step(self):
@@ -71,11 +72,15 @@ class Wolf(RandomWalker):
         sheep = [obj for obj in this_cell if isinstance(obj, Sheep)]
         if len(sheep) > 0:
             sheep_to_eat = self.random.choice(sheep)
-            self.energy += self.model.wolf_gain_from_food
 
-            # Kill the sheep
-            self.model.grid._remove_agent(self.pos, sheep_to_eat)
-            self.model.schedule.remove(sheep_to_eat)
+            if sheep_to_eat.escapeChance <= self.model.escapeRange:
+                self.energy += self.model.wolf_gain_from_food
+
+                # Kill the sheep
+                self.model.grid._remove_agent(self.pos, sheep_to_eat)
+                self.model.schedule.remove(sheep_to_eat)
+            else:
+                sheep_to_eat.energy /= 2
 
         # Death or reproduction
         if self.energy < 0:

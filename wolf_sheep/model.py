@@ -1,7 +1,6 @@
 """
 Wolf-Sheep Predation Model
 ================================
-
 Replication of the model found in NetLogo:
     Wilensky, U. (1997). NetLogo Wolf Sheep Predation model.
     http://ccl.northwestern.edu/netlogo/models/WolfSheepPredation.
@@ -13,6 +12,9 @@ from mesa import Model
 from mesa.space import MultiGrid
 from mesa.datacollection import DataCollector
 from mesa.time import RandomActivationByType
+from mesa.batchrunner import batch_run
+import datetime
+import pandas as pd
 
 from wolf_sheep.agents import Sheep, Wolf, GrassPatch
 
@@ -37,6 +39,8 @@ class WolfSheep(Model):
     grass_regrowth_time = 30
     sheep_gain_from_food = 4
 
+    escapeRange = 0 
+
     verbose = False  # Print-monitoring
 
     description = (
@@ -54,7 +58,8 @@ class WolfSheep(Model):
         wolf_gain_from_food=20,
         grass=False,
         grass_regrowth_time=30,
-        sheep_gain_from_food=4,
+        sheep_gain_from_food=4, 
+        escapeRange = 0
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
@@ -82,6 +87,7 @@ class WolfSheep(Model):
         self.grass = grass
         self.grass_regrowth_time = grass_regrowth_time
         self.sheep_gain_from_food = sheep_gain_from_food
+        self.escapeRange = escapeRange
 
         self.schedule = RandomActivationByType(self)
         self.grid = MultiGrid(self.width, self.height, torus=True)
@@ -154,3 +160,31 @@ class WolfSheep(Model):
             print("")
             print("Final number wolves: ", self.schedule.get_type_count(Wolf))
             print("Final number sheep: ", self.schedule.get_type_count(Sheep))
+
+def export():
+    params = {
+        "width": 20,
+        "height": 20,
+        "initial_sheep": [50, 100, 150],
+        "initial_wolves": [50, 100, 150],
+        "sheep_reproduce":0.04,
+        "wolf_reproduce":0.05,
+        "wolf_gain_from_food":20,
+        "grass":True,
+        "grass_regrowth_time":30,
+        "sheep_gain_from_food":4,
+        "escapeRange": 1
+    }
+
+    results = batch_run(
+        WolfSheep,
+        params,
+        iterations=50,
+        data_collection_period=10,
+        max_steps=100
+    )
+
+    results_df = pd.DataFrame(results)
+    timestamp = str(datetime.datetime.now())
+
+    results_df.to_csv(timestamp +" - wolf_sheep_escapeRange 1 .csv")
