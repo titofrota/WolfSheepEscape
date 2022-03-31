@@ -74,13 +74,13 @@ class Wolf(RandomWalker):
             sheep_to_eat = self.random.choice(sheep)
 
             if sheep_to_eat.escapeChance <= self.model.escapeRange:
+                sheep_to_eat.energy /= 2
+            else:
                 self.energy += self.model.wolf_gain_from_food
 
                 # Kill the sheep
                 self.model.grid._remove_agent(self.pos, sheep_to_eat)
                 self.model.schedule.remove(sheep_to_eat)
-            else:
-                sheep_to_eat.energy /= 2
 
         # Death or reproduction
         if self.energy < 0:
