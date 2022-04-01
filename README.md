@@ -83,8 +83,10 @@ python3 export.py
 -   **grass**: flag da grama;
 -   **grass_regrowth_time**: taxa de recrescimento da grama;
 -   **sheep_gain_from_food**: energia que as ovelhas ganham ao se alimentar;
--   **initial_sheep**: número de inicial de ovelhas;
+-   **initial_sheep**: número inicial de ovelhas;
 -   **initial_wolves**: número inicial de lobos;
--   **escapeRange**: margem de probabilidade de escape;
+-   **escape_range**: margem de probabilidade de escape;
+-   **total_attacks**: quantidade total de ataques;
 -   **Wolves**: número de lobos vivos;
 -   **Sheep**: número de ovelhas vivas;
+-   **Escaped**: porcentagem de ataques em que ovelhas escaparam.

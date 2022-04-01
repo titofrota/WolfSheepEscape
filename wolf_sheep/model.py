@@ -182,7 +182,7 @@ def export():
         "grass":True,
         "grass_regrowth_time":30,
         "sheep_gain_from_food":4,
-        "escape_range": 1,
+        "escape_range": 0.3,
         "escaped": 0,
         "total_attacks": 0
     }
