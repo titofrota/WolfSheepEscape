@@ -18,6 +18,8 @@ import pandas as pd
 
 from wolf_sheep.agents import Sheep, Wolf, GrassPatch
 
+def countSheepsThatEscaped(model):
+    return ((model.sheeps_that_escaped * 100)/model.total_attacks)
 
 class WolfSheep(Model):
     """
@@ -39,7 +41,7 @@ class WolfSheep(Model):
     grass_regrowth_time = 30
     sheep_gain_from_food = 4
 
-    escapeRange = 0 
+    escape_range = 0.0
 
     verbose = False  # Print-monitoring
 
@@ -59,7 +61,9 @@ class WolfSheep(Model):
         grass=False,
         grass_regrowth_time=30,
         sheep_gain_from_food=4, 
-        escapeRange = 0
+        escape_range = 0.0,
+        escaped = 0,
+        total_attacks = 0
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
@@ -87,7 +91,11 @@ class WolfSheep(Model):
         self.grass = grass
         self.grass_regrowth_time = grass_regrowth_time
         self.sheep_gain_from_food = sheep_gain_from_food
-        self.escapeRange = escapeRange
+        self.escape_range = escape_range
+
+        self.sheeps_that_escaped = 0
+
+        self.total_attacks = 0
 
         self.schedule = RandomActivationByType(self)
         self.grid = MultiGrid(self.width, self.height, torus=True)
@@ -95,6 +103,7 @@ class WolfSheep(Model):
             {
                 "Wolves": lambda m: m.schedule.get_type_count(Wolf),
                 "Sheep": lambda m: m.schedule.get_type_count(Sheep),
+                "Escaped": lambda m: m.sheeps_that_escaped
             }
         )
 
@@ -173,18 +182,20 @@ def export():
         "grass":True,
         "grass_regrowth_time":30,
         "sheep_gain_from_food":4,
-        "escapeRange": 1
+        "escape_range": 1,
+        "escaped": 0,
+        "total_attacks": 0
     }
 
     results = batch_run(
         WolfSheep,
         params,
         iterations=50,
-        data_collection_period=10,
-        max_steps=100
+        data_collection_period=5,
+        max_steps=300
     )
 
     results_df = pd.DataFrame(results)
     timestamp = str(datetime.datetime.now())
 
-    results_df.to_csv(timestamp +" - wolf_sheep_escapeRange 1 .csv")
+    results_df.to_csv(timestamp +" - wolf_sheep_experiment.csv")

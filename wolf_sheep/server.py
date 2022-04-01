@@ -42,7 +42,7 @@ def wolf_sheep_portrayal(agent):
 
 canvas_element = CanvasGrid(wolf_sheep_portrayal, 20, 20, 500, 500)
 chart_element = ChartModule(
-    [{"Label": "Wolves", "Color": "#AA0000"}, {"Label": "Sheep", "Color": "#666666"}]
+    [{"Label": "Wolves", "Color": "#AA0000"}, {"Label": "Sheep", "Color": "#666666"}, {"Label": "Escaped", "Color": "#A020F0"}]
 )
 
 model_params = {
@@ -74,7 +74,7 @@ model_params = {
     "sheep_gain_from_food": UserSettableParameter(
         "slider", "Sheep Gain From Food", 4, 1, 10
     ),
-    "escapeRange": UserSettableParameter(
+    "escape_range": UserSettableParameter(
         "slider", "Escape Range", 0.00, 0.00, 1.0, 0.01
     ),
 }

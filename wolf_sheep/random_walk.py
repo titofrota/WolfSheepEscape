@@ -40,3 +40,5 @@ class RandomWalker(Agent):
         next_move = self.random.choice(next_moves)
         # Now move:
         self.model.grid.move_agent(self, next_move)
+
+        # print(self.model.sheeps_that_escaped)

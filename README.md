@@ -14,29 +14,41 @@ Com as modificações inseridas, há chances da ovelha conseguir escapar do lobo
 Após a observação das execuções do modelo no framework mesa, foi formulada a seguinte hipótese:
 "Caso as ovelhas tenham chance de escapar do lobos, poderá observar-se uma a diminuição no número de lobos vivos no ecossistema."
 
+Assim, adicionei a probabilidade de uma ovelha escapar do ataque de um lobo. Entretanto, isso a faz perder energia. Se um lobo estiver no mesmo quadrado que uma ovelha, só irá conseguir comê-la se a chance dela escapar não estiver dentro do range de sorte. Para justificar a modificação, queria observar se as ovelhas de fato sobreviveriam por conseguir escapar ou se o gasto energético as faria sucumbir mais rápido.
+
+Ainda é possível traçar a porcentagem de vezes que um ataque foi mal sucedido devido ao escape da ovelha.
+
+Na última versão o algoritmo não foi implementado corretamente, mas agora corrigi o problema que fazia com que o funcionamento fosse justamente o contrário.
+
 
 ## Mudanças
 Foram adicionadas as seguintes variáveis:
-- `escapeRange`: Define a margem das chances da ovelha conseguir escapar do lobo, não há valor mínimo mas o valor máximo é 1.
+- `escape_range`: Define a margem das chances da ovelha conseguir escapar do lobo, é um valor entre 0 e 1 (que pode ter o máximo modificado).
 - `escapeChance`: Cada ovelha possui uma chance aleatória (entre 0 e 1) de conseguir escapar.
 
-O comportamento esperado foi do prevalecimento das ovelhas no ecossistema, uma vez que os lobos possuem menos chances de abatê-las. Assim, quanto maior o *range*, maiores são as chances disso ocorrer. 
+O comportamento esperado foi do prevalecimento das ovelhas no ecossistema, uma vez que os lobos possuem menos chances de abatê-las. Assim, quanto maior o *range*, maiores são as chances disso ocorrer. Todavia, há o risco das ovelhas morrerem por conta do cansaço do escape.
 
 O código referente ao abate das ovelhas foi modificado para comportar a lógica nova, além de diminuir a energia delas após o escape.
 
 ```
-if  len(sheep) >  0:
-	sheep_to_eat =  self.random.choice(sheep)
-	if sheep_to_eat.escapeChance <=  self.model.escapeRange:
-		self.energy +=  self.model.wolf_gain_from_food
-		# Kill the sheep
-		self.model.grid._remove_agent(self.pos, sheep_to_eat)
-		self.model.schedule.remove(sheep_to_eat)
+        if len(sheep) > 0:
+            sheep_to_eat = self.random.choice(sheep)
 
-	else:
-		sheep_to_eat.energy /=  2```
+            if sheep_to_eat.escapeChance <= self.model.escape_range:
+                sheep_to_eat.energy /= 2
+                self.model.sheeps_that_escaped += 1
+                print(self.model.sheeps_that_escaped)
+            else:
+                self.energy += self.model.wolf_gain_from_food
+
+                # Kill the sheep
+                self.model.grid._remove_agent(self.pos, sheep_to_eat)
+                self.model.schedule.remove(sheep_to_eat)
+                self.model.total_attacks += 1
 ```
 Além disso, foram adicionadas modificações para a exportação do *output* em .csv
+
+Adicionei, ainda, uma variável dependente que mostra a porentagem de ataques mal sucedidos.
 
 ## Instruções
 
